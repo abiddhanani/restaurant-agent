@@ -36,6 +36,23 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# Explicitly list packages for hatchling since the project name uses a hyphen and
+# there isn't a single directory matching "restaurant_agent". Without this the
+# default file-selection heuristics fail with "Unable to determine which files to
+# ship inside the wheel" as seen when running `uv sync`.
+[tool.hatch.build.targets.wheel]
+packages = [
+    "a2a",
+    "api",
+    "core",
+    "evaluation",
+    "mcp",
+    "rag",
+    "sessions",
+    "tenants",
+    "widget",
+]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
