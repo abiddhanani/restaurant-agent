@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-agent
+  namespace: restaurant-agent
+  labels:
+    app: restaurant-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: restaurant-agent
+  template:
+    metadata:
+      labels:
+        app: restaurant-agent
+    spec:
+      containers:
+        - name: restaurant-agent
+          image: your-ecr-repo/restaurant-agent:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: restaurant-agent-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-agent
+  namespace: restaurant-agent
+spec:
+  selector:
+    app: restaurant-agent
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: restaurant-agent
+  namespace: restaurant-agent
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-agent
+                port:
+                  number: 80

@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  agent:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    depends_on:
+      - chromadb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
+  # External A2A agents (stub services for Phase 0)
+  cuisine-expert:
+    image: python:3.12-slim
+    command: echo "CuisineExpert stub — implement in Week 5"
+    ports:
+      - "8002:8000"
+
+  dietary-expert:
+    image: python:3.12-slim
+    command: echo "DietaryExpert stub — implement in Week 5"
+    ports:
+      - "8003:8000"
+
+volumes:
+  chroma_data:
