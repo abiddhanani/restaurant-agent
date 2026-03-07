@@ -1,4 +1,4 @@
-# 🚀 Quick Start — Restaurant Agent
+# Quick Start — Restaurant Agent
 
 **You have a complete scaffold. Here's how to start building.**
 
@@ -30,83 +30,64 @@ uv run uvicorn api.main:app --reload
 
 ## Step 2: Understand the System (5 minutes)
 
-**Read these 3 files in order:**
+**Read these files:**
 
-1. **CLAUDE.md** — Conventions Claude Code follows  
-2. **PROGRESS.md** — Master tracker of all 21 stories  
+1. **CLAUDE.md** — Conventions Claude Code follows
+2. **PROGRESS.md** — Master tracker of all 21 stories
 3. **docs/WORKFLOW.md** — How to work story-by-story
 
-**Key insight:** You don't need to remember everything. CLAUDE.md tells Claude Code what to do. PROGRESS.md tells you where you are. Story files tell you what to build.
+**Key insight:** Stories live in Jira (project: RA). PROGRESS.md tells you where you are. Pull the current Jira story to see what to build.
 
 ---
 
 ## Step 3: Start Your First Story (30 minutes)
 
 ```bash
-# 1. Open the tracker
+# 1. Check the tracker
 cat PROGRESS.md
+# Current story: RA-2
 
-# Current story: S01 - Project Foundation
-
-# 2. Read the story
-cat docs/stories/S01-foundation.md
-
-# 3. Start Claude Code
+# 2. Start Claude Code
 claude
-
-# 4. Tell Claude Code:
 ```
 
-**Paste this into Claude Code:**
+**Tell Claude Code:**
 ```
-I'm working on S01 - Project Foundation & Database Setup.
-Read docs/stories/S01-foundation.md and implement all tasks in order.
+Pull Jira story RA-2 and implement all tasks.
 Follow all conventions in CLAUDE.md.
 Run tests after each task.
 ```
 
 **Claude Code will:**
-- Read the story file
+- Fetch the story from Jira
 - Read CLAUDE.md for conventions
-- Implement database initialization
-- Create tenant config table
-- Seed demo data
-- Run tests
-- Fix any failures
+- Implement tasks in order
+- Run tests and fix any failures
 
 **You:**
 - Watch it work
-- Check off tasks in the story file as they complete
-- Run the manual verification steps yourself
-- Mark story complete when done
+- Run manual verification steps yourself
+- Transition the Jira ticket to Done when complete
 
 ---
 
 ## Step 4: Track Your Progress (ongoing)
 
-After S01 completes:
+After a story completes, update PROGRESS.md:
 
-**Update PROGRESS.md:**
 ```markdown
-**Last Updated:** 2025-01-15  ← today's date
-**Current Story:** S02        ← next story
+**Last Updated:** 2026-03-07
+**Current Story:** RA-3
 
-### S01: Project Foundation & Database Setup
-**Status:** ✅ Complete       ← change from ⬜ to ✅
+### RA-2: Multi-Tenant Middleware & Routing
+**Status:** ✅ Complete
 ```
 
 **Commit:**
 ```bash
 git add .
-git commit -m "feat(foundation): S01 complete - database initialized"
+git commit -m "feat(tenant): RA-2 complete - multi-tenant middleware"
 git push
-```
-
-**Move to S02:**
-```bash
-cat docs/stories/S02-multitenant.md
-claude
-# Tell Claude Code: "I'm on S02. Read docs/stories/S02-multitenant.md..."
 ```
 
 ---
@@ -115,12 +96,12 @@ claude
 
 | Week | Goal | Stories | Hours |
 |------|------|---------|-------|
-| 1 | Foundation + DB | S01-S03 | 10-14h |
-| 2 | RAG Pipeline | S04-S06 | 13-16h |
-| 3 | Agent Core + A2A | S07-S10 | 17-22h |
-| 4 | Tools | S11-S14 | 17-21h |
-| 5 | Guardrails + MCP | S15-S18 | 18-21h |
-| 6 | Eval + Deploy | S19-S21 | 16-21h |
+| 1 | Foundation + DB | RA-1–RA-3 | 10-14h |
+| 2 | RAG Pipeline | RA-4–RA-6 | 13-16h |
+| 3 | Agent Core + A2A | RA-7–RA-10 | 17-22h |
+| 4 | Tools | RA-11–RA-14 | 17-21h |
+| 5 | Guardrails + MCP | RA-15–RA-18 | 18-21h |
+| 6 | Eval + Deploy | RA-19–RA-21 | 16-21h |
 | **Total** | **Working MVP** | **21 stories** | **~100 hours** |
 
 **Realistic pace:** 10-15 hours/week = 6-8 weeks to Phase 0 MVP
@@ -131,18 +112,15 @@ claude
 
 After completing all 21 stories:
 
-✅ Multi-tenant restaurant agent  
-✅ RAG pipeline with real Google Reviews  
-✅ Taste profile that evolves through conversation  
-✅ 3-layer production guardrails  
-✅ A2A and MCP interfaces (future-ready)  
-✅ Embeddable widget  
-✅ Deployed and live on Railway  
-✅ Langfuse observability  
-✅ Eval pipeline with golden dataset  
-
-**And most importantly:**  
-✅ A codebase you fully understand because you built it story by story
+- Multi-tenant restaurant agent
+- RAG pipeline with real Google Reviews
+- Taste profile that evolves through conversation
+- 3-layer production guardrails
+- A2A and MCP interfaces (future-ready)
+- Embeddable widget
+- Deployed and live on Railway
+- Langfuse observability
+- Eval pipeline with golden dataset
 
 ---
 
@@ -154,8 +132,7 @@ claude
 
 Then tell it:
 ```
-Read PROGRESS.md and docs/stories/S01-foundation.md.
-I'm starting S01. Implement all tasks following CLAUDE.md conventions.
+Pull Jira story RA-2 and implement all tasks following CLAUDE.md conventions.
 ```
 
 That's it. You're building.
@@ -165,20 +142,19 @@ That's it. You're building.
 ## Getting Help
 
 **If stuck on a story:**
-1. Read the story's "Implementation Notes"
+1. Re-read the Jira story's acceptance criteria
 2. Ask Claude Code: "What's blocking this task?"
 3. Check if previous stories are actually complete
 
 **If a story seems wrong:**
-1. Refine it — add tasks, update estimates
+1. Refine it directly in Jira
 2. Stories are guides, not contracts
-3. Document changes in the story file
+3. Document decisions in the Jira ticket comments
 
 **If you need to take a break:**
-1. Check off completed tasks
-2. Update PROGRESS.md
-3. Commit
-4. When you return, PROGRESS.md tells you exactly where you were
+1. Update PROGRESS.md with current status
+2. Commit
+3. When you return, PROGRESS.md tells you exactly where you were
 
 ---
 
@@ -188,6 +164,3 @@ That's it. You're building.
 - CLAUDE.md has the conventions — Claude Code reads it every session
 - Stories have dependencies — finish Week 1 before Week 2
 - Commit after each story — clear checkpoints
-- This is vibe engineering — refine as you discover
-
-**Now go build.**

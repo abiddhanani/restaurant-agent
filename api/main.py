@@ -1,14 +1,28 @@
 """FastAPI application entry point."""
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import chat, menu, tenants, health
+
 from a2a.server import router as a2a_router
+from api.routes import chat, health, menu, tenants
+from core.db.init import create_db_and_tables, seed_demo_tenant
 from mcp.server import router as mcp_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run DB setup on startup."""
+    await create_db_and_tables()
+    await seed_demo_tenant()
+    yield
+
 
 app = FastAPI(
     title="Restaurant Agent API",
     description="Multi-tenant restaurant chat agent with RAG, A2A, and MCP",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
