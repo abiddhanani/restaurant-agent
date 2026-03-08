@@ -1,5 +1,5 @@
 """Chat endpoint — main entry point for widget conversations."""
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
 
@@ -21,13 +21,13 @@ class ChatResponse(BaseModel):
 
 @router.post("", response_model=ChatResponse)
 async def chat(
-    request: ChatRequest,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    body: ChatRequest,
+    request: Request,
 ) -> ChatResponse:
     """
-    Main chat endpoint. Tenant resolved from API key.
+    Main chat endpoint. Tenant resolved from X-Tenant-ID header via middleware.
     Runs: input guardrail → agent graph → output guardrail → response.
     Implemented Week 3.
     """
-    # TODO Week 3: resolve tenant from API key, run agent graph
+    # TODO Week 3: use request.state.tenant_id, run agent graph
     raise HTTPException(status_code=501, detail="Chat not yet implemented")

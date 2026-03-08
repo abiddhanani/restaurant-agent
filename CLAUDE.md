@@ -10,6 +10,14 @@ uv run python -m evaluation.pipeline --dataset golden     # evals — run before
 docker-compose -f docker/docker-compose.yml up --build    # docker
 ```
 
+## Definition of Done (every story)
+1. `uv run pytest tests/ -v` — all tests pass
+2. `docker-compose -f docker/docker-compose.yml up --build` — app starts, healthcheck passes at `http://localhost:8000/health`
+3. Manual smoke tests against live container to verify acceptance criteria
+4. Update `PROGRESS.md` — mark story ✅, update `Last Updated` + `Current Story`
+5. Transition Jira ticket → Done
+6. Commit: `feat|fix|refactor(scope): description`
+
 ## Tech Stack
 - Python 3.12, FastAPI, LangGraph, Anthropic SDK (`claude-sonnet-4-20250514`)
 - SQLModel (Pydantic v2 + SQLAlchemy) + aiosqlite — async throughout

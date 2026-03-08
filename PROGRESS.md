@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
-**Last Updated:** 2026-03-07
-**Current Story:** RA-2
+**Last Updated:** 2026-03-08
+**Current Story:** RA-3
 
 ---
 
@@ -26,7 +26,7 @@
 **Objective:** Working FastAPI app with SQLite, basic tenant config
 
 ### RA-2: Multi-Tenant Middleware & Routing
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-2
 **Objective:** Tenant isolation working end-to-end
 
