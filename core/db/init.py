@@ -5,6 +5,7 @@ from sqlmodel import SQLModel, select
 
 from core.db.session import AsyncSessionLocal, async_engine
 from core.models.tenant import TenantConfig  # noqa: F401 – registers table with metadata
+from core.models.menu import MenuItem  # noqa: F401 – registers table with metadata
 
 
 async def create_db_and_tables() -> None:
