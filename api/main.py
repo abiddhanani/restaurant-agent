@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from a2a.server import router as a2a_router
+from api.middleware.tenant import TenantMiddleware
 from api.routes import chat, health, menu, tenants
 from core.db.init import create_db_and_tables, seed_demo_tenant
 from mcp.server import router as mcp_router
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(TenantMiddleware)
 
 app.include_router(health.router)
 app.include_router(chat.router)
