@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-08
-**Current Story:** RA-3
+**Current Story:** RA-4
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Week | Stories | Status |
 |------|---------|--------|
-| 1 | RA-1 – RA-3 | 🔄 In Progress |
+| 1 | RA-1 – RA-3 | ✅ Complete |
 | 2 | RA-4 – RA-6 | ⬜ Not Started |
 | 3 | RA-7 – RA-10 | ⬜ Not Started |
 | 4 | RA-11 – RA-14 | ⬜ Not Started |
@@ -31,7 +31,7 @@
 **Objective:** Tenant isolation working end-to-end
 
 ### RA-3: Menu Data Model & CRUD
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-3
 **Objective:** Load and query menu items per tenant
 
