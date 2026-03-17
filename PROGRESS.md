@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
-**Last Updated:** 2026-03-08
-**Current Story:** RA-4
+**Last Updated:** 2026-03-17
+**Current Story:** RA-5
 
 ---
 
@@ -40,7 +40,7 @@
 ## Week 2: RAG Pipeline
 
 ### RA-4: Google Places API Integration
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-4
 **Objective:** Fetch real reviews from Google Places API
 
