@@ -8,6 +8,7 @@ from a2a.server import router as a2a_router
 from api.middleware.tenant import TenantMiddleware
 from api.routes import chat, health, menu, tenants
 from core.db.init import create_db_and_tables, seed_demo_tenant
+from core.db.seed import seed_demo_menu
 from mcp.server import router as mcp_router
 
 
@@ -16,6 +17,7 @@ async def lifespan(app: FastAPI):
     """Run DB setup on startup."""
     await create_db_and_tables()
     await seed_demo_tenant()
+    await seed_demo_menu()
     yield
 
 
