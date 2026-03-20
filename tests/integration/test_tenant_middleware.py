@@ -93,14 +93,24 @@ async def test_inactive_tenant_returns_404(client):
 
 
 @pytest.mark.asyncio
-async def test_valid_tenant_passes_through(client):
-    """AC3: Valid active tenant proceeds past middleware (chat returns 501, not 400/404)."""
+async def test_valid_tenant_passes_through(client, monkeypatch):
+    """AC3: Valid active tenant proceeds past middleware (chat returns 200)."""
+    from unittest.mock import AsyncMock, MagicMock
+    import core.agent.nodes as nodes_module
+
+    mock_response = MagicMock()
+    mock_response.content = [MagicMock(text="Hello! How can I help?")]
+
+    mock_client = AsyncMock()
+    mock_client.messages.create = AsyncMock(return_value=mock_response)
+    monkeypatch.setattr(nodes_module, "AsyncAnthropic", lambda: mock_client)
+
     resp = await client.post(
         "/chat",
         json={"message": "hello"},
         headers={"X-Tenant-ID": "restaurant_demo"},
     )
-    assert resp.status_code == 501  # middleware passed, route not yet implemented
+    assert resp.status_code == 200  # middleware passed, agent responded
 
 
 @pytest.mark.asyncio

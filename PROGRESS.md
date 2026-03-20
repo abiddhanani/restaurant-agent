@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-7
+**Current Story:** RA-8
 
 ---
 
@@ -11,7 +11,7 @@
 |------|---------|--------|
 | 1 | RA-1 – RA-3 | ✅ Complete |
 | 2 | RA-4 – RA-6 | ✅ Complete |
-| 3 | RA-7 – RA-10 | ⬜ Not Started |
+| 3 | RA-7 – RA-10 | 🔄 In Progress |
 | 4 | RA-11 – RA-14 | ⬜ Not Started |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
 | 6 | RA-19 – RA-21 | ⬜ Not Started |
@@ -59,7 +59,7 @@
 ## Week 3: Agent Core & A2A
 
 ### RA-7: LangGraph Agent Graph Foundation
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-7
 **Objective:** Basic conversational agent running
 
