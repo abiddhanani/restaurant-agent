@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-6
+**Current Story:** RA-7
 
 ---
 
@@ -10,7 +10,7 @@
 | Week | Stories | Status |
 |------|---------|--------|
 | 1 | RA-1 – RA-3 | ✅ Complete |
-| 2 | RA-4 – RA-6 | 🔄 In Progress |
+| 2 | RA-4 – RA-6 | ✅ Complete |
 | 3 | RA-7 – RA-10 | ⬜ Not Started |
 | 4 | RA-11 – RA-14 | ⬜ Not Started |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
@@ -50,7 +50,7 @@
 **Objective:** Chunk reviews, embed, store in ChromaDB
 
 ### RA-6: Retrieval Engine with Freshness Scoring
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-6
 **Objective:** Query ChromaDB with freshness decay working
 
