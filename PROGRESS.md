@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-8
+**Current Story:** RA-9
 
 ---
 
@@ -64,7 +64,7 @@
 **Objective:** Basic conversational agent running
 
 ### RA-8: Session Management (In-Memory)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-8
 **Objective:** Session persistence across messages
 

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
 from core.agent.graph import agent_graph
-from core.models.session import Message
+from core.models.session import Message  # used in type annotations
 from sessions.manager import SessionManager
 
 logger = logging.getLogger(__name__)
@@ -37,17 +37,11 @@ async def chat(
     """Main chat endpoint. Tenant resolved from X-Tenant-ID header via middleware."""
     tenant_id: str = request.state.tenant_id
 
-    # Get or create session.
-    if body.session_id:
-        session = await _session_manager.get_session(body.session_id)
-        if session is None:
-            session = await _session_manager.create_session(tenant_id)
-    else:
-        session = await _session_manager.create_session(tenant_id)
+    # Get or create session (enforces tenant isolation).
+    session = await _session_manager.get_or_create(tenant_id, body.session_id)
 
     # Add user message.
-    user_message = Message(role="user", content=body.message)
-    session.messages.append(user_message)
+    await _session_manager.add_message(session.session_id, "user", body.message)
 
     # Build initial state for this turn.
     initial_state = {
