@@ -12,6 +12,7 @@ from core.tools.base import BaseTool, ToolInput, ToolOutput
 class MenuFetcherInput(ToolInput):
     """Input for MenuFetcherTool."""
     available_only: bool = Field(default=True)
+    category: Optional[str] = Field(default=None, description="Optional category filter")
 
 
 class MenuFetcherOutput(ToolOutput):
@@ -30,6 +31,8 @@ class MenuFetcherTool(BaseTool):
             q = select(MenuItem).where(MenuItem.tenant_id == input_data.tenant_id)
             if input_data.available_only:
                 q = q.where(MenuItem.is_available == True)  # noqa: E712
+            if input_data.category:
+                q = q.where(MenuItem.category == input_data.category)
             results = await session.exec(q)
             items = results.all()
         return MenuFetcherOutput(

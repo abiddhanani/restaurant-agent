@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-11
+**Current Story:** RA-12
 
 ---
 
@@ -12,7 +12,7 @@
 | 1 | RA-1 – RA-3 | ✅ Complete |
 | 2 | RA-4 – RA-6 | ✅ Complete |
 | 3 | RA-7 – RA-10 | ✅ Complete |
-| 4 | RA-11 – RA-14 | ⬜ Not Started |
+| 4 | RA-11 – RA-14 | 🔄 In Progress |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
 | 6 | RA-19 – RA-21 | ⬜ Not Started |
 
@@ -83,7 +83,7 @@
 ## Week 4: Tools
 
 ### RA-11: Menu Fetcher Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-11
 **Objective:** Agent can query available dishes
 
