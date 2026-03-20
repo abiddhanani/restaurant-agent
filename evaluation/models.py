@@ -32,6 +32,7 @@ class GoldenConversation(BaseModel):
     conversation: list[ConversationTurn]
     expected_dishes_mentioned: list[str] = []
     expected_allergens_blocked: list[str] = []
+    agent_response: str = ""  # sample/expected response to score
     tags: list[str] = []
     expected_scores: EvalScores
 

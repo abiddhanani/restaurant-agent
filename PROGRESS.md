@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-19
+**Current Story:** RA-20
 
 ---
 
@@ -131,7 +131,7 @@
 ## Week 6: Evaluation & Deployment
 
 ### RA-19: Golden Dataset & Eval Pipeline
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-19
 **Objective:** 10+ scored conversations, pipeline running
 
