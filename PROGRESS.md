@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-18
+**Current Story:** RA-19
 
 ---
 
@@ -122,7 +122,7 @@
 **Objective:** Hallucination check, grounding verification
 
 ### RA-18: MCP Server Implementation
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-18
 **Objective:** MCP endpoint working, testable from Claude
 
