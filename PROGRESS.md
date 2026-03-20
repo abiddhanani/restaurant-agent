@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-15
+**Current Story:** RA-16
 
 ---
 
@@ -107,7 +107,7 @@
 ## Week 5: Guardrails & MCP
 
 ### RA-15: Input Guardrails (Layer 1)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-15
 **Objective:** Scope, PII, toxicity filtering
 

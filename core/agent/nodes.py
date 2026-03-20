@@ -10,7 +10,10 @@ from anthropic import AsyncAnthropic
 from a2a.agents.cuisine_expert import CuisineExpertConnector
 from a2a.client import A2AClient
 from core.agent.state import AgentState
+from core.guardrails.pipeline import GuardrailPipeline
 from core.models.session import Message
+
+_guardrail_pipeline = GuardrailPipeline()
 from core.tools.dish_recommender import DishRecommenderInput, DishRecommenderTool
 from core.tools.menu_fetcher import MenuFetcherInput, MenuFetcherTool
 from core.tools.review_retrieval import ReviewRetrievalInput, ReviewRetrievalTool
@@ -221,6 +224,14 @@ async def llm_node(state: AgentState) -> dict:
     """Call the LLM (with tools) and execute any tool calls before returning."""
     client = AsyncAnthropic()
     model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+
+    # Layer 1: input guardrail — check the latest user message
+    latest_user_msg = next(
+        (m.content for m in reversed(state.messages) if m.role == "user"), ""
+    )
+    guardrail_result = await _guardrail_pipeline.check_input(latest_user_msg, state.tenant_id)
+    if not guardrail_result.passed:
+        return {"messages": [Message(role="assistant", content=guardrail_result.reason or "I can only help with food and restaurant questions.")]}
 
     # Build Anthropic API message list (raw format supports tool_use blocks).
     api_messages: list[dict] = [

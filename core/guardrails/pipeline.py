@@ -1,5 +1,4 @@
 """GuardrailPipeline — orchestrates all three guardrail layers."""
-from enum import Enum
 from typing import Any, Optional
 from pydantic import BaseModel
 
@@ -33,8 +32,13 @@ class GuardrailPipeline:
 
     async def check_input(self, message: str, tenant_id: str) -> GuardrailResult:
         """Layer 1: validate user input before LLM sees it."""
-        # TODO Week 5: implement scope classifier, PII detector, toxicity filter
-        return GuardrailResult(passed=True, layer="input", check_name="passthrough")
+        from core.guardrails.layer1_input import ScopeClassifier, PIIDetector, ToxicityFilter
+
+        for checker in (ToxicityFilter(), ScopeClassifier(), PIIDetector()):
+            result = checker.check(message)
+            if not result.passed:
+                return result
+        return GuardrailResult(passed=True, layer="input", check_name="all_passed")
 
     async def check_tool_execution(
         self,
