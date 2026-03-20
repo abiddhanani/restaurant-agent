@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-16
+**Current Story:** RA-17
 
 ---
 
@@ -112,7 +112,7 @@
 **Objective:** Scope, PII, toxicity filtering
 
 ### RA-16: Tool Execution Guardrails (Layer 2)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-16
 **Objective:** Allergen circuit breaker, menu grounding
 

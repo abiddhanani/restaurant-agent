@@ -45,14 +45,29 @@ class GuardrailPipeline:
         tool_name: str,
         tool_input: Any,
         dietary_hard_stops: list[str],
-        tenant_menu_dish_ids: list[str],
+        tenant_menu_dish_names: list[str],
     ) -> GuardrailResult:
         """
         Layer 2: validate before any tool runs.
         Allergen check here is deterministic code — not a prompt.
         """
-        # TODO Week 5: implement menu grounding + allergen circuit breaker
-        return GuardrailResult(passed=True, layer="tool_execution", check_name="passthrough")
+        from core.guardrails.layer2_tool import AllergenCircuitBreaker, MenuGroundingValidator
+
+        # Allergen circuit breaker: check dish_allergens if provided in tool_input
+        dish_allergens = tool_input.get("dish_allergens", []) if isinstance(tool_input, dict) else []
+        if dish_allergens and dietary_hard_stops:
+            result = AllergenCircuitBreaker().check(dish_allergens, dietary_hard_stops)
+            if not result.passed:
+                return result
+
+        # Menu grounding: check dish_name if provided
+        dish_name = tool_input.get("dish_name", "") if isinstance(tool_input, dict) else ""
+        if dish_name and tenant_menu_dish_names:
+            result = MenuGroundingValidator().check(dish_name, tenant_menu_dish_names)
+            if not result.passed:
+                return result
+
+        return GuardrailResult(passed=True, layer="tool_execution", check_name="all_passed")
 
     async def check_output(
         self,

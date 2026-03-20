@@ -23,7 +23,7 @@ async def test_allergen_check_structure(pipeline):
         tool_name="dish_recommender",
         tool_input={},
         dietary_hard_stops=["nuts"],
-        tenant_menu_dish_ids=["dish_001"],
+        tenant_menu_dish_names=["dish_001"],
     )
     # Will assert False once implemented — stub passes for now
     assert result.layer == "tool_execution"

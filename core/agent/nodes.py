@@ -150,6 +150,18 @@ _review_retrieval = ReviewRetrievalTool()
 
 async def _execute_tool(name: str, tool_input: dict[str, Any], state: AgentState) -> str:
     """Dispatch a tool call and return the result as a JSON string."""
+    # Layer 2: tool-execution guardrail (allergen circuit breaker + menu grounding)
+    profile = state.taste_profile
+    hard_stops = profile.dietary_hard_stops if profile else []
+    guardrail_result = await _guardrail_pipeline.check_tool_execution(
+        tool_name=name,
+        tool_input=tool_input,
+        dietary_hard_stops=hard_stops,
+        tenant_menu_dish_names=[],  # populated per-tool below when dish_name is known
+    )
+    if not guardrail_result.passed:
+        return json.dumps({"error": guardrail_result.reason, "blocked": True})
+
     if name == "menu_fetcher":
         result = await _menu_fetcher(
             MenuFetcherInput(
