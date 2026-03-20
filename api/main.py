@@ -1,8 +1,10 @@
 """FastAPI application entry point."""
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from a2a.server import router as a2a_router, well_known_router
 from api.middleware.tenant import TenantMiddleware
@@ -44,3 +46,7 @@ app.include_router(tenants.router)
 app.include_router(a2a_router)
 app.include_router(well_known_router)
 app.include_router(mcp_router)
+
+_static_dir = Path(__file__).parent.parent / "static"
+if _static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")

@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-20
+**Current Story:** RA-21
 
 ---
 
@@ -136,7 +136,7 @@
 **Objective:** 10+ scored conversations, pipeline running
 
 ### RA-20: Embeddable Widget
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-20
 **Objective:** Widget embeddable on test restaurant site
 
