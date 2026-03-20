@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
-**Last Updated:** 2026-03-17
-**Current Story:** RA-5
+**Last Updated:** 2026-03-19
+**Current Story:** RA-6
 
 ---
 
@@ -10,7 +10,7 @@
 | Week | Stories | Status |
 |------|---------|--------|
 | 1 | RA-1 – RA-3 | ✅ Complete |
-| 2 | RA-4 – RA-6 | ⬜ Not Started |
+| 2 | RA-4 – RA-6 | 🔄 In Progress |
 | 3 | RA-7 – RA-10 | ⬜ Not Started |
 | 4 | RA-11 – RA-14 | ⬜ Not Started |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
@@ -45,7 +45,7 @@
 **Objective:** Fetch real reviews from Google Places API
 
 ### RA-5: Review Chunking & Embedding
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-5
 **Objective:** Chunk reviews, embed, store in ChromaDB
 

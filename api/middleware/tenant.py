@@ -17,11 +17,11 @@ class TenantMiddleware(BaseHTTPMiddleware):
         if request.url.path in EXEMPT_PATHS:
             return await call_next(request)
 
-        tenant_id = request.headers.get("X-Tenant-ID")
+        tenant_id = request.headers.get("X-Tenant-ID") or request.query_params.get("tenant_id")
         if not tenant_id:
             return JSONResponse(
                 status_code=400,
-                content={"detail": "X-Tenant-ID header is required"},
+                content={"detail": "X-Tenant-ID header (or ?tenant_id= query param) is required"},
             )
 
         async with get_session() as session:
