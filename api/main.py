@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from a2a.server import router as a2a_router
+from a2a.server import router as a2a_router, well_known_router
 from api.middleware.tenant import TenantMiddleware
 from api.routes import chat, health, menu, tenants
 from core.db.init import create_db_and_tables, seed_demo_tenant
@@ -42,4 +42,5 @@ app.include_router(chat.router)
 app.include_router(menu.router)
 app.include_router(tenants.router)
 app.include_router(a2a_router)
+app.include_router(well_known_router)
 app.include_router(mcp_router)

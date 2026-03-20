@@ -8,13 +8,15 @@ from core.db.session import get_session
 from core.models.tenant import TenantConfig
 
 EXEMPT_PATHS = {"/health"}
+EXEMPT_PREFIXES = ("/a2a", "/.well-known")
 
 
 class TenantMiddleware(BaseHTTPMiddleware):
     """Resolve X-Tenant-ID header → TenantConfig, inject into request.state."""
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path in EXEMPT_PATHS:
+        path = request.url.path
+        if path in EXEMPT_PATHS or path.startswith(EXEMPT_PREFIXES):
             return await call_next(request)
 
         tenant_id = request.headers.get("X-Tenant-ID") or request.query_params.get("tenant_id")
