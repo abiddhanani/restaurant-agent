@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
-**Last Updated:** 2026-03-19
-**Current Story:** RA-13
+**Last Updated:** 2026-03-20
+**Current Story:** RA-14
 
 ---
 
@@ -93,7 +93,7 @@
 **Objective:** Agent retrieves relevant reviews from ChromaDB
 
 ### RA-13: Dish Recommender Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-13
 **Objective:** Cross-reference menu + taste profile + reviews
 

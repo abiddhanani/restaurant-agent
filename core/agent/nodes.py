@@ -8,6 +8,7 @@ from anthropic import AsyncAnthropic
 
 from core.agent.state import AgentState
 from core.models.session import Message
+from core.tools.dish_recommender import DishRecommenderInput, DishRecommenderTool
 from core.tools.menu_fetcher import MenuFetcherInput, MenuFetcherTool
 from core.tools.review_retrieval import ReviewRetrievalInput, ReviewRetrievalTool
 
@@ -70,12 +71,50 @@ TOOLS = [
             "required": ["query"],
         },
     },
+    {
+        "name": "dish_recommender",
+        "description": (
+            "Recommend dishes by cross-referencing the menu with the user's taste profile and reviews. "
+            "Use when the user asks for recommendations, suggestions, or what they should order. "
+            "Always respects allergen hard stops — safe to call even with dietary restrictions."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "User's preference description (e.g. 'spicy food, no gluten')",
+                },
+                "allergen_stops": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Hard-stop allergens (e.g. ['gluten', 'dairy'])",
+                },
+                "positive_signals": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Positive taste signals (e.g. ['spicy', 'umami'])",
+                },
+                "negative_signals": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Negative taste signals (e.g. ['cilantro', 'sweet'])",
+                },
+                "top_n": {
+                    "type": "integer",
+                    "description": "Number of recommendations to return (default: 3)",
+                },
+            },
+            "required": ["query"],
+        },
+    },
 ]
 
 # --------------------------------------------------------------------------- #
 # Tool executor
 # --------------------------------------------------------------------------- #
 
+_dish_recommender = DishRecommenderTool()
 _menu_fetcher = MenuFetcherTool()
 _review_retrieval = ReviewRetrievalTool()
 
@@ -100,6 +139,20 @@ async def _execute_tool(name: str, tool_input: dict[str, Any], state: AgentState
                 query=tool_input["query"],
                 top_k=tool_input.get("top_k", 5),
                 min_freshness_score=tool_input.get("min_freshness_score", 0.3),
+            )
+        )
+        return json.dumps(result.model_dump(), default=str)
+    if name == "dish_recommender":
+        profile = state.taste_profile
+        result = await _dish_recommender(
+            DishRecommenderInput(
+                tenant_id=state.tenant_id,
+                session_id=state.session_id,
+                query=tool_input.get("query", ""),
+                allergen_stops=tool_input.get("allergen_stops", profile.dietary_hard_stops if profile else []),
+                positive_signals=tool_input.get("positive_signals", profile.positive_signals if profile else []),
+                negative_signals=tool_input.get("negative_signals", profile.negative_signals if profile else []),
+                top_n=tool_input.get("top_n", 3),
             )
         )
         return json.dumps(result.model_dump(), default=str)

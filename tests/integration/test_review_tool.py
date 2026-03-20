@@ -3,11 +3,11 @@ import json
 from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock
 
+import numpy as np
 import chromadb
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sentence_transformers import SentenceTransformer
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -25,7 +25,7 @@ TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
 _test_engine = create_async_engine(TEST_DB_URL, echo=False)
 _TestSessionLocal = async_sessionmaker(_test_engine, class_=AsyncSession, expire_on_commit=False)
 
-_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+_RNG = np.random.default_rng(42)
 
 SAMPLE_REVIEWS = [
     "The pasta carbonara is absolutely divine. Rich, creamy, and perfectly al dente.",
@@ -45,7 +45,7 @@ def chroma_path(tmp_path_factory):
     ids, embeddings, documents, metadatas = [], [], [], []
     for idx, text in enumerate(SAMPLE_REVIEWS):
         chunk_id = f"rev_{idx}_chunk_0"
-        emb = _MODEL.encode(text).tolist()
+        emb = _RNG.random(384).tolist()
         ids.append(chunk_id)
         embeddings.append(emb)
         documents.append(text)
@@ -110,7 +110,7 @@ async def test_min_freshness_filters_low_freshness(chroma_path, tmp_path):
     client = chromadb.PersistentClient(path=str(stale_path))
     tenant = "stale_tenant"
     col = client.get_or_create_collection(f"reviews_{tenant}")
-    emb = _MODEL.encode("stale old review text").tolist()
+    emb = _RNG.random(384).tolist()
     col.upsert(
         ids=["stale_chunk"],
         embeddings=[emb],

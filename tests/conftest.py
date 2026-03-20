@@ -1,7 +1,31 @@
 """Shared pytest fixtures."""
+import numpy as np
 import pytest
+from unittest.mock import patch
+
 from core.models.preference import UserTasteProfile
 from core.models.menu import Menu, Dish, AllergenInfo
+
+_RNG = np.random.default_rng(42)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_embedding_service():
+    """Replace slow SentenceTransformer with deterministic 384-dim random vectors.
+
+    None of the tests require real semantic accuracy — they check types, counts,
+    ordering, and filtering logic. This drops the full-suite runtime from ~3 min
+    to a few seconds.
+    """
+    def _fast_embed(self, texts: list[str]) -> list[list[float]]:
+        return _RNG.random((len(texts), 384)).tolist()
+
+    def _fast_embed_one(self, text: str) -> list[float]:
+        return _RNG.random(384).tolist()
+
+    with patch("rag.pipeline.embeddings.EmbeddingService.embed", _fast_embed), \
+         patch("rag.pipeline.embeddings.EmbeddingService.embed_one", _fast_embed_one):
+        yield
 
 
 @pytest.fixture
