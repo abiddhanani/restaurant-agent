@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-21
+**Current Story:** Complete
 
 ---
 
@@ -14,7 +14,7 @@
 | 3 | RA-7 – RA-10 | ✅ Complete |
 | 4 | RA-11 – RA-14 | 🔄 In Progress |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
-| 6 | RA-19 – RA-21 | ⬜ Not Started |
+| 6 | RA-19 – RA-21 | ✅ Complete |
 
 ---
 
@@ -141,7 +141,7 @@
 **Objective:** Widget embeddable on test restaurant site
 
 ### RA-21: Deploy to Railway + Observability
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-21
 **Objective:** Live deployment, Langfuse tracing working
 

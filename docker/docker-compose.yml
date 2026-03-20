@@ -24,16 +24,28 @@ services:
 
   # External A2A agents (stub services for Phase 0)
   cuisine-expert:
-    image: python:3.12-slim
-    command: echo "CuisineExpert stub — implement in Week 5"
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: uv run uvicorn a2a.server:app --host 0.0.0.0 --port 8000
     ports:
       - "8002:8000"
+    env_file:
+      - ../.env
+    environment:
+      - SERVICE_NAME=cuisine-expert
 
   dietary-expert:
-    image: python:3.12-slim
-    command: echo "DietaryExpert stub — implement in Week 5"
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: uv run uvicorn a2a.server:app --host 0.0.0.0 --port 8000
     ports:
       - "8003:8000"
+    env_file:
+      - ../.env
+    environment:
+      - SERVICE_NAME=dietary-expert
 
 volumes:
   chroma_data:

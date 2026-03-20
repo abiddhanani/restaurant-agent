@@ -231,9 +231,19 @@ except ImportError:  # pragma: no cover
 # LLM node — agentic tool-use loop
 # --------------------------------------------------------------------------- #
 
-@_observe()
+@_observe(name="llm_node")
 async def llm_node(state: AgentState) -> dict:
     """Call the LLM (with tools) and execute any tool calls before returning."""
+    # Attach Langfuse trace metadata when tracing is active
+    try:
+        from langfuse.decorators import langfuse_context
+        langfuse_context.update_current_observation(
+            session_id=state.session_id,
+            metadata={"tenant_id": state.tenant_id, "model": os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")},
+        )
+    except Exception:
+        pass
+
     client = AsyncAnthropic()
     model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
 
