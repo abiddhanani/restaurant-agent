@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-12
+**Current Story:** RA-13
 
 ---
 
@@ -88,7 +88,7 @@
 **Objective:** Agent can query available dishes
 
 ### RA-12: Review Retrieval Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-12
 **Objective:** Agent retrieves relevant reviews from ChromaDB
 

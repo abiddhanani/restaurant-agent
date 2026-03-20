@@ -9,6 +9,7 @@ from anthropic import AsyncAnthropic
 from core.agent.state import AgentState
 from core.models.session import Message
 from core.tools.menu_fetcher import MenuFetcherInput, MenuFetcherTool
+from core.tools.review_retrieval import ReviewRetrievalInput, ReviewRetrievalTool
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,31 @@ TOOLS = [
             },
         },
     },
+    {
+        "name": "review_retrieval",
+        "description": (
+            "Retrieve relevant customer review snippets from the vector store. "
+            "Use when the user asks about quality, experience, what people say, or specific dish feedback."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Semantic search query (e.g. 'best pasta dish', 'service quality')",
+                },
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of review snippets to retrieve (default: 5)",
+                },
+                "min_freshness_score": {
+                    "type": "number",
+                    "description": "Minimum freshness score 0-1 (default: 0.3 — filters very old reviews)",
+                },
+            },
+            "required": ["query"],
+        },
+    },
 ]
 
 # --------------------------------------------------------------------------- #
@@ -51,6 +77,7 @@ TOOLS = [
 # --------------------------------------------------------------------------- #
 
 _menu_fetcher = MenuFetcherTool()
+_review_retrieval = ReviewRetrievalTool()
 
 
 async def _execute_tool(name: str, tool_input: dict[str, Any], state: AgentState) -> str:
@@ -62,6 +89,17 @@ async def _execute_tool(name: str, tool_input: dict[str, Any], state: AgentState
                 session_id=state.session_id,
                 available_only=tool_input.get("available_only", True),
                 category=tool_input.get("category"),
+            )
+        )
+        return json.dumps(result.model_dump(), default=str)
+    if name == "review_retrieval":
+        result = await _review_retrieval(
+            ReviewRetrievalInput(
+                tenant_id=state.tenant_id,
+                session_id=state.session_id,
+                query=tool_input["query"],
+                top_k=tool_input.get("top_k", 5),
+                min_freshness_score=tool_input.get("min_freshness_score", 0.3),
             )
         )
         return json.dumps(result.model_dump(), default=str)
