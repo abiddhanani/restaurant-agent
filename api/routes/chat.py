@@ -6,14 +6,17 @@ from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
 from core.agent.graph import agent_graph
+from core.models.preference import UserTasteProfile
 from core.models.session import Message  # used in type annotations
+from core.preferences.profile import PreferenceExtractor
 from sessions.manager import SessionManager
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
 
-# In-memory session store — Phase 0 (Redis in Phase 1+).
+# Module-level singletons — Phase 0 in-memory.
 _session_manager = SessionManager()
+_preference_extractor = PreferenceExtractor()
 
 
 class ChatRequest(BaseModel):
@@ -40,6 +43,15 @@ async def chat(
     # Get or create session (enforces tenant isolation).
     session = await _session_manager.get_or_create(tenant_id, body.session_id)
 
+    # Update taste profile from user message.
+    current_profile = session.taste_profile or UserTasteProfile(
+        session_id=session.session_id, tenant_id=tenant_id
+    )
+    updated_profile = await _preference_extractor.update_from_message(
+        current_profile, body.message, role="user"
+    )
+    session.taste_profile = updated_profile
+
     # Add user message.
     await _session_manager.add_message(session.session_id, "user", body.message)
 
@@ -49,6 +61,7 @@ async def chat(
         "tenant_id": tenant_id,
         "messages": session.messages,
         "current_input": body.message,
+        "taste_profile": updated_profile,
         "input_passed_guardrails": True,
         "output_passed_guardrails": True,
     }

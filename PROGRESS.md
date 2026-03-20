@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-19
-**Current Story:** RA-9
+**Current Story:** RA-10
 
 ---
 
@@ -69,7 +69,7 @@
 **Objective:** Session persistence across messages
 
 ### RA-9: Preference Model Integration
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-9
 **Objective:** Taste profile evolves through conversation
 

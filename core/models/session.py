@@ -1,7 +1,10 @@
 """Session and conversation data models."""
 from datetime import datetime
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from core.models.preference import UserTasteProfile
 
 
 class Message(BaseModel):
@@ -17,6 +20,7 @@ class ConversationSession(BaseModel):
     session_id: str
     tenant_id: str
     messages: list[Message] = Field(default_factory=list)
-    preference_profile_id: Optional[str] = None
+    # taste_profile stored inline for Phase 0 (no DB required)
+    taste_profile: Optional[Any] = None  # UserTasteProfile at runtime
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_active: datetime = Field(default_factory=datetime.utcnow)
