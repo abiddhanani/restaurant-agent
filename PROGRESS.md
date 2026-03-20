@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-17
+**Current Story:** RA-18
 
 ---
 
@@ -117,7 +117,7 @@
 **Objective:** Allergen circuit breaker, menu grounding
 
 ### RA-17: Output Guardrails (Layer 3)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-17
 **Objective:** Hallucination check, grounding verification
 

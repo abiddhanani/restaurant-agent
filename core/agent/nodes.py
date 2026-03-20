@@ -266,6 +266,17 @@ async def llm_node(state: AgentState) -> dict:
                 (b.text for b in response.content if hasattr(b, "text")), ""
             )
             logger.debug("LLM reply for session=%s: %s", state.session_id, reply_text[:80])
+
+            # Layer 3: output guardrail
+            output_result = await _guardrail_pipeline.check_output(
+                response=reply_text,
+                retrieved_docs=[],  # populated if review tool was called
+                tenant_menu_dish_names=[],
+            )
+            if not output_result.passed:
+                safe_reply = "I'm sorry, I can only provide information about our menu and restaurant."
+                return {"messages": [Message(role="assistant", content=safe_reply)]}
+
             return {"messages": [Message(role="assistant", content=reply_text)]}
 
         if response.stop_reason == "tool_use":

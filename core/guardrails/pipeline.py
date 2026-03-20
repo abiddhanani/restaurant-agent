@@ -76,5 +76,15 @@ class GuardrailPipeline:
         tenant_menu_dish_names: list[str],
     ) -> GuardrailResult:
         """Layer 3: validate agent response before sending to user."""
-        # TODO Week 5: implement hallucination check, claim verifier, scope drift
-        return GuardrailResult(passed=True, layer="output", check_name="passthrough")
+        from core.guardrails.layer3_output import HallucinationChecker, ClaimVerifier, ScopeDriftChecker
+
+        for checker, args in [
+            (ScopeDriftChecker(), (response,)),
+            (ClaimVerifier(), (response, retrieved_docs)),
+            (HallucinationChecker(), (response, tenant_menu_dish_names)),
+        ]:
+            result = checker.check(*args)
+            if not result.passed:
+                return result
+
+        return GuardrailResult(passed=True, layer="output", check_name="all_passed")
