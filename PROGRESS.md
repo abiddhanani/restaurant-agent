@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
 **Last Updated:** 2026-03-20
-**Current Story:** RA-14
+**Current Story:** RA-15
 
 ---
 
@@ -98,7 +98,7 @@
 **Objective:** Cross-reference menu + taste profile + reviews
 
 ### RA-14: External Cuisine Agent (Stub)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-14
 **Objective:** A2A client calls external cuisine expert
 

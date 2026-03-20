@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import APIRouter
 
 from a2a.agent_card import AgentCard, build_agent_card
+from a2a.agents.cuisine_expert import get_cuisine_expert_response
 from a2a.client import AgentRequest, AgentResponse
 
 router = APIRouter(prefix="/a2a", tags=["a2a"])
@@ -66,6 +67,12 @@ _CAPABILITY_HANDLERS = {
     "recommend_dish": _stub_recommend_dish,
     "search_reviews": _stub_search_reviews,
 }
+
+
+@router.post("/cuisine/invoke", response_model=AgentResponse)
+async def invoke_cuisine_capability(request: AgentRequest) -> AgentResponse:
+    """Cuisine-expert stub endpoint — returns hard-coded cuisine facts (Phase 0)."""
+    return get_cuisine_expert_response(request)
 
 
 @router.post("/invoke", response_model=AgentResponse)

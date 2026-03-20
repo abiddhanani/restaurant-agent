@@ -1,4 +1,5 @@
 """LangGraph node implementations for the restaurant agent."""
+import asyncio
 import json
 import logging
 import os
@@ -6,11 +7,19 @@ from typing import Any
 
 from anthropic import AsyncAnthropic
 
+from a2a.agents.cuisine_expert import CuisineExpertConnector
+from a2a.client import A2AClient
 from core.agent.state import AgentState
 from core.models.session import Message
 from core.tools.dish_recommender import DishRecommenderInput, DishRecommenderTool
 from core.tools.menu_fetcher import MenuFetcherInput, MenuFetcherTool
 from core.tools.review_retrieval import ReviewRetrievalInput, ReviewRetrievalTool
+
+# A2A client with cuisine-expert connector registered
+_a2a_client = A2AClient()
+_a2a_client.register(CuisineExpertConnector())
+
+_CUISINE_A2A_TIMEOUT = 5.0  # seconds
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +78,23 @@ TOOLS = [
                 },
             },
             "required": ["query"],
+        },
+    },
+    {
+        "name": "get_cuisine_info",
+        "description": (
+            "Get cultural background, history, and key ingredients for a cuisine type. "
+            "Use when the user asks about the origins, tradition, or cultural context of a cuisine."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "cuisine_type": {
+                    "type": "string",
+                    "description": "The cuisine to look up (e.g. 'Italian', 'Indian', 'Japanese')",
+                },
+            },
+            "required": ["cuisine_type"],
         },
     },
     {
@@ -156,6 +182,22 @@ async def _execute_tool(name: str, tool_input: dict[str, Any], state: AgentState
             )
         )
         return json.dumps(result.model_dump(), default=str)
+    if name == "get_cuisine_info":
+        cuisine_type = tool_input.get("cuisine_type", "unknown")
+        try:
+            response = await asyncio.wait_for(
+                _a2a_client.dispatch(
+                    agent_id="cuisine-expert-v1",
+                    capability="get_cuisine_info",
+                    payload={"cuisine_type": cuisine_type},
+                ),
+                timeout=_CUISINE_A2A_TIMEOUT,
+            )
+            if response.success:
+                return json.dumps(response.data, default=str)
+        except (asyncio.TimeoutError, Exception):
+            pass
+        return json.dumps({"cuisine_type": cuisine_type, "info": "Cuisine info unavailable"})
     return json.dumps({"error": f"Unknown tool: {name!r}"})
 
 
