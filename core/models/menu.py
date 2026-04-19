@@ -45,6 +45,7 @@ class CatalogItem(SQLModel, table=True):
     attributes: str = Field(default="{}")     # JSON dict for domain-specific extras
     is_available: bool = Field(default=True)
     image_url: Optional[str] = None
+    video_url: Optional[str] = None
 
 
 class CatalogItemRead(BaseModel):
@@ -59,6 +60,7 @@ class CatalogItemRead(BaseModel):
     attributes: dict
     is_available: bool
     image_url: Optional[str] = None
+    video_url: Optional[str] = None
 
     @classmethod
     def from_db(cls, item: CatalogItem) -> "CatalogItemRead":
@@ -73,4 +75,5 @@ class CatalogItemRead(BaseModel):
             attributes=json.loads(item.attributes),
             is_available=item.is_available,
             image_url=item.image_url,
+            video_url=item.video_url,
         )

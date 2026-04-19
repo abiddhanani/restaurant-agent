@@ -7,7 +7,7 @@ from sqlmodel import select
 from core.db.session import get_session
 from core.models.tenant import TenantConfig
 
-EXEMPT_PATHS = {"/health"}
+EXEMPT_PATHS = {"/health", "/onboard"}
 EXEMPT_PREFIXES = ("/a2a", "/.well-known")
 
 
