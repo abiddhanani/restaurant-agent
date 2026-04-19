@@ -7,20 +7,19 @@ from core.guardrails.pipeline import GuardrailResult
 # Hallucination checker
 # ---------------------------------------------------------------------------
 
-# Patterns that indicate the LLM is introducing a specific dish name
-_DISH_INTRO_PATTERNS = [
+# Patterns that indicate the LLM is introducing a specific item name
+_ITEM_INTRO_PATTERNS = [
     re.compile(r"\b(?:try|recommend|suggest|order|have|get)\s+(?:the\s+)?([A-Z][A-Za-z\s']{2,30}?)(?:\s*[,!.]|$)", re.M | re.I),
-    re.compile(r"\bthe\s+([A-Z][A-Za-z\s']{2,25})(?:\s+is\b|\s+dish\b|\s+here\b)", re.M),
+    re.compile(r"\bthe\s+([A-Z][A-Za-z\s']{2,25})(?:\s+is\b|\s+dish\b|\s+here\b|\s+service\b|\s+plan\b)", re.M),
 ]
 
 
 def _extract_capitalised_phrases(text: str) -> list[str]:
-    """Extract capitalised noun phrases (likely dish names) from text."""
+    """Extract capitalised noun phrases (likely item names) from text."""
     phrases: list[str] = []
-    for pattern in _DISH_INTRO_PATTERNS:
+    for pattern in _ITEM_INTRO_PATTERNS:
         for match in pattern.finditer(text):
             phrase = match.group(1).strip()
-            # Only count phrases that genuinely start with an uppercase letter
             if phrase and phrase[0].isupper() and 2 <= len(phrase.split()) <= 5:
                 phrases.append(phrase)
     return phrases
@@ -28,28 +27,28 @@ def _extract_capitalised_phrases(text: str) -> list[str]:
 
 class HallucinationChecker:
     """
-    Verifies that capitalised dish-like phrases in the response actually
-    exist on the tenant menu. Blocks hallucinated dish names.
+    Verifies that capitalised item-like phrases in the response actually
+    exist in the tenant catalog. Blocks hallucinated item names.
     """
 
     def check(
         self,
         response: str,
-        tenant_menu_dish_names: list[str],
+        catalog_item_names: list[str],
     ) -> GuardrailResult:
-        if not tenant_menu_dish_names:
+        if not catalog_item_names:
             return GuardrailResult(passed=True, layer="output", check_name="hallucination_checker")
 
-        menu_lower = {d.lower() for d in tenant_menu_dish_names}
+        catalog_lower = {n.lower() for n in catalog_item_names}
         candidate_phrases = _extract_capitalised_phrases(response)
 
         for phrase in candidate_phrases:
-            if phrase.lower() not in menu_lower:
+            if phrase.lower() not in catalog_lower:
                 return GuardrailResult(
                     passed=False,
                     layer="output",
                     check_name="hallucination_checker",
-                    reason=f"Response mentions '{phrase}' which is not on the menu.",
+                    reason=f"Response mentions '{phrase}' which is not in the catalog.",
                     blocked_content=phrase,
                 )
 
@@ -114,7 +113,7 @@ class ScopeDriftChecker:
                     passed=False,
                     layer="output",
                     check_name="scope_drift",
-                    reason="Response contains off-topic content unrelated to the restaurant.",
+                    reason="Response contains off-topic content.",
                     blocked_content=response[:200],
                 )
         return GuardrailResult(passed=True, layer="output", check_name="scope_drift")

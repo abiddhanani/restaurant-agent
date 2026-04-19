@@ -1,12 +1,12 @@
-"""Preference model — builds UserTasteProfile from conversation signals."""
+"""Preference model — builds CustomerProfile from conversation signals."""
 import re
 
-from core.models.preference import UserTasteProfile
+from core.models.preference import CustomerProfile
 
 # --------------------------------------------------------------------------- #
-# Allergen keyword registry
+# Constraint keyword registry (food domain defaults — overridable via tenant config)
 # --------------------------------------------------------------------------- #
-_ALLERGEN_CANONICAL: dict[str, list[str]] = {
+_CONSTRAINT_CANONICAL: dict[str, list[str]] = {
     "nuts": ["nut", "nuts", "peanut", "peanuts", "tree nut", "cashew", "almond", "walnut", "pecan", "pistachio", "hazelnut"],
     "dairy": ["dairy", "milk", "lactose", "cheese", "butter", "cream", "yogurt", "whey"],
     "gluten": ["gluten", "wheat", "barley", "rye"],
@@ -17,14 +17,14 @@ _ALLERGEN_CANONICAL: dict[str, list[str]] = {
     "sesame": ["sesame", "tahini"],
 }
 
-# Patterns that indicate an allergen constraint
-_ALLERGEN_TRIGGER_RE = re.compile(
+# Patterns that indicate a constraint
+_CONSTRAINT_TRIGGER_RE = re.compile(
     r"""
     (?:
         (?:i'?m?\s+)?allergic\s+to |
-        can't\s+(?:have|eat) |
-        cannot\s+(?:have|eat) |
-        don't\s+eat |
+        can't\s+(?:have|eat|use) |
+        cannot\s+(?:have|eat|use) |
+        don't\s+(?:eat|want|like) |
         no\s+ |
         avoid |
         intolerant\s+to |
@@ -39,7 +39,7 @@ _ALLERGEN_TRIGGER_RE = re.compile(
 _VEGAN_RE = re.compile(r"\bi'?m\s+(?:a\s+)?vegan\b", re.IGNORECASE)
 _VEGETARIAN_RE = re.compile(r"\bi'?m\s+(?:a\s+)?vegetarian\b", re.IGNORECASE)
 
-# Positive/negative food signal patterns
+# Positive/negative signal patterns
 _POSITIVE_RE = re.compile(
     r"(?:love|enjoy|like|adore|fan of|obsessed with|prefer|great lover of)\s+(.+?)(?:\.|,|!|\?|$)",
     re.IGNORECASE,
@@ -49,18 +49,18 @@ _NEGATIVE_RE = re.compile(
     re.IGNORECASE,
 )
 
-_ADVENTURE_UP_WORDS = frozenset(
+_OPENNESS_UP_WORDS = frozenset(
     ["adventurous", "exotic", "try anything", "love trying", "new things", "unusual", "bold", "different", "adventurous eater"]
 )
-_ADVENTURE_DOWN_WORDS = frozenset(
+_OPENNESS_DOWN_WORDS = frozenset(
     ["safe", "plain", "mild", "nothing weird", "comfortable", "familiar", "nothing too spicy", "simple", "boring"]
 )
 
 
-def _to_canonical_allergen(phrase: str) -> str | None:
-    """Map a free-text phrase to a canonical allergen name, or None."""
+def _to_canonical_constraint(phrase: str) -> str | None:
+    """Map a free-text phrase to a canonical constraint name, or None."""
     phrase_lower = phrase.lower()
-    for canonical, keywords in _ALLERGEN_CANONICAL.items():
+    for canonical, keywords in _CONSTRAINT_CANONICAL.items():
         for kw in keywords:
             if kw in phrase_lower:
                 return canonical
@@ -69,54 +69,52 @@ def _to_canonical_allergen(phrase: str) -> str | None:
 
 class PreferenceExtractor:
     """
-    Extracts taste signals from user messages and updates UserTasteProfile
-    incrementally. Keyword/regex-based for Phase 0. No LLM call required —
-    keeps the hot path cheap and tests free of API mocks.
+    Extracts preference signals from user messages and updates CustomerProfile
+    incrementally. Keyword/regex-based — no LLM call required.
     """
 
     async def update_from_message(
         self,
-        profile: UserTasteProfile,
+        profile: CustomerProfile,
         message: str,
         role: str,
-    ) -> UserTasteProfile:
+    ) -> CustomerProfile:
         """Extract signals from a single message and return updated profile.
 
         Only processes user messages — assistant messages are skipped.
-        Allergens → dietary_hard_stops (deduplicated, canonical).
+        Constraints → hard_stops (deduplicated, canonical).
         Positive/negative phrases → respective signal lists.
-        Adventure cues → adventure_score ±0.1, clamped [0, 1].
+        Openness cues → openness_score ±0.1, clamped [0, 1].
         Confidence increases by 0.05 per extraction pass.
         """
         if role != "user":
             return profile
 
-        hard_stops = list(profile.dietary_hard_stops)
+        hard_stops = list(profile.hard_stops)
         positive = list(profile.positive_signals)
         negative = list(profile.negative_signals)
-        adventure = profile.adventure_score
+        openness = profile.openness_score
         changed = False
 
         # --- Vegan / vegetarian shorthands ---
         if _VEGAN_RE.search(message):
-            for allergen in ("dairy", "eggs", "fish", "shellfish", "meat"):
-                if allergen not in hard_stops:
-                    hard_stops.append(allergen)
+            for constraint in ("dairy", "eggs", "fish", "shellfish", "meat"):
+                if constraint not in hard_stops:
+                    hard_stops.append(constraint)
                     changed = True
 
         if _VEGETARIAN_RE.search(message):
-            for allergen in ("meat", "fish", "shellfish"):
-                if allergen not in hard_stops:
-                    hard_stops.append(allergen)
+            for constraint in ("meat", "fish", "shellfish"):
+                if constraint not in hard_stops:
+                    hard_stops.append(constraint)
                     changed = True
 
-        # --- Explicit allergen triggers ---
-        for match in _ALLERGEN_TRIGGER_RE.finditer(message):
+        # --- Explicit constraint triggers ---
+        for match in _CONSTRAINT_TRIGGER_RE.finditer(message):
             phrase = match.group(1).strip()
-            # Handle compound: "gluten or dairy", "nuts and eggs"
             parts = re.split(r"\s+(?:or|and)\s+", phrase, flags=re.IGNORECASE)
             for part in parts:
-                canonical = _to_canonical_allergen(part)
+                canonical = _to_canonical_constraint(part)
                 if canonical and canonical not in hard_stops:
                     hard_stops.append(canonical)
                     changed = True
@@ -135,16 +133,16 @@ class PreferenceExtractor:
                 negative.append(signal)
                 changed = True
 
-        # --- Adventure score ---
+        # --- Openness score ---
         msg_lower = message.lower()
-        for word in _ADVENTURE_UP_WORDS:
+        for word in _OPENNESS_UP_WORDS:
             if word in msg_lower:
-                adventure = min(1.0, adventure + 0.1)
+                openness = min(1.0, openness + 0.1)
                 changed = True
                 break
-        for word in _ADVENTURE_DOWN_WORDS:
+        for word in _OPENNESS_DOWN_WORDS:
             if word in msg_lower:
-                adventure = max(0.0, adventure - 0.1)
+                openness = max(0.0, openness - 0.1)
                 changed = True
                 break
 
@@ -153,14 +151,14 @@ class PreferenceExtractor:
 
         return profile.model_copy(
             update={
-                "dietary_hard_stops": hard_stops,
+                "hard_stops": hard_stops,
                 "positive_signals": positive,
                 "negative_signals": negative,
-                "adventure_score": round(adventure, 4),
+                "openness_score": round(openness, 4),
                 "confidence": self._increase_confidence(profile),
             }
         )
 
-    def _increase_confidence(self, profile: UserTasteProfile, delta: float = 0.05) -> float:
+    def _increase_confidence(self, profile: CustomerProfile, delta: float = 0.05) -> float:
         """Increment confidence, capped at 1.0."""
         return min(1.0, profile.confidence + delta)

@@ -73,7 +73,7 @@ class TestCuisineExpertConnector:
             mock_client.post = AsyncMock(return_value=mock_response)
             mock_client_cls.return_value = mock_client
 
-            response = await self.connector.call("get_cuisine_info", {"cuisine_type": "Indian"})
+            response = await self.connector.call("get_domain_context", {"context_type": "Indian"})
 
         assert response.success is True
         assert response.data["cuisine_type"] == "Indian"
@@ -87,7 +87,7 @@ class TestCuisineExpertConnector:
             mock_client.post = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
             mock_client_cls.return_value = mock_client
 
-            response = await self.connector.call("get_cuisine_info", {"cuisine_type": "Italian"})
+            response = await self.connector.call("get_domain_context", {"context_type": "Italian"})
 
         assert response.success is False
         assert "unavailable" in response.error.lower()
@@ -147,7 +147,7 @@ async def test_agent_node_cuisine_tool_returns_info():
     state = MagicMock()
     state.tenant_id = "t1"
     state.session_id = "s1"
-    state.taste_profile = None
+    state.customer_profile = None
 
     mock_response = AgentResponse(
         success=True,
@@ -159,7 +159,7 @@ async def test_agent_node_cuisine_tool_returns_info():
 
     with patch.object(nodes_module, "_a2a_client", mock_a2a):
         result_str = await nodes_module._execute_tool(
-            "get_cuisine_info", {"cuisine_type": "Italian"}, state
+            "get_domain_context", {"context_type": "Italian"}, state
         )
 
     result = json.loads(result_str)
@@ -172,7 +172,7 @@ async def test_agent_node_cuisine_tool_timeout_returns_fallback():
     state = MagicMock()
     state.tenant_id = "t1"
     state.session_id = "s1"
-    state.taste_profile = None
+    state.customer_profile = None
 
     async def _slow_dispatch(*args, **kwargs):
         await asyncio.sleep(10)  # will be cancelled by wait_for
@@ -181,10 +181,10 @@ async def test_agent_node_cuisine_tool_timeout_returns_fallback():
     mock_a2a.dispatch = _slow_dispatch
 
     with patch.object(nodes_module, "_a2a_client", mock_a2a), \
-         patch.object(nodes_module, "_CUISINE_A2A_TIMEOUT", 0.01):
+         patch.object(nodes_module, "_DOMAIN_A2A_TIMEOUT", 0.01):
         result_str = await nodes_module._execute_tool(
-            "get_cuisine_info", {"cuisine_type": "Thai"}, state
+            "get_domain_context", {"context_type": "Thai"}, state
         )
 
     result = json.loads(result_str)
-    assert "Cuisine info unavailable" in result.get("info", "")
+    assert "Context info unavailable" in result.get("info", "")

@@ -4,11 +4,11 @@ import re
 from core.guardrails.pipeline import GuardrailResult
 
 # ---------------------------------------------------------------------------
-# Scope classifier — food/restaurant keywords
+# Scope classifier — broad catalog/business keywords (restaurant defaults)
 # ---------------------------------------------------------------------------
 
-_FOOD_KEYWORDS = {
-    "menu", "dish", "dishes", "food", "eat", "eating", "drink", "drinks",
+_SCOPE_KEYWORDS = {
+    "menu", "catalog", "dish", "dishes", "food", "eat", "eating", "drink", "drinks",
     "order", "ordering", "recommend", "recommendation", "suggestions", "suggest",
     "restaurant", "cuisine", "meal", "meals", "appetizer", "starter", "main",
     "dessert", "desserts", "snack", "beverage", "beverages", "wine", "beer",
@@ -20,7 +20,9 @@ _FOOD_KEYWORDS = {
     "pasta", "pizza", "burger", "sushi", "salad", "soup", "steak", "seafood",
     "chicken", "lamb", "beef", "pork", "fish", "prawn", "shrimp", "tofu",
     "halal", "kosher", "organic", "fresh", "seasonal", "local", "review",
-    "reviews", "rating", "what", "which", "can", "could", "have", "like",
+    "reviews", "rating", "product", "service", "services", "package", "plan",
+    "option", "options", "style", "cut", "color", "treatment", "feature",
+    "what", "which", "can", "could", "have", "like",
     "want", "need", "looking", "something", "anything", "everything",
 }
 
@@ -34,7 +36,7 @@ _OUT_OF_SCOPE_PATTERNS = [
 
 
 class ScopeClassifier:
-    """Blocks messages unrelated to food/restaurant domain."""
+    """Blocks messages unrelated to the business domain."""
 
     def check(self, message: str) -> GuardrailResult:
         lower = message.lower()
@@ -47,17 +49,17 @@ class ScopeClassifier:
                     passed=False,
                     layer="input",
                     check_name="scope_classifier",
-                    reason="Message appears to be out of scope for a restaurant assistant.",
+                    reason="Message appears to be out of scope.",
                     blocked_content=message,
                 )
 
-        # If no food keyword overlap AND message is longer than a trivial greeting, block
-        if len(words) > 4 and not (words & _FOOD_KEYWORDS):
+        # If no scope keyword overlap AND message is longer than a trivial greeting, block
+        if len(words) > 4 and not (words & _SCOPE_KEYWORDS):
             return GuardrailResult(
                 passed=False,
                 layer="input",
                 check_name="scope_classifier",
-                reason="I can only help with food, menu, and restaurant-related questions.",
+                reason="I can only help with questions related to our products and services.",
                 blocked_content=message,
             )
 

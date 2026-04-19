@@ -24,8 +24,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Restaurant Agent API",
-    description="Multi-tenant restaurant chat agent with RAG, A2A, and MCP",
+    title="Catalog Agent API",
+    description="Multi-tenant catalog recommendation agent with RAG, A2A, and MCP",
     version="0.1.0",
     lifespan=lifespan,
 )

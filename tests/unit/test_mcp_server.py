@@ -1,4 +1,4 @@
-"""Unit tests for MCP server — tool schemas, HTTP endpoints, dispatch (RA-18)."""
+"""Unit tests for MCP server — tool schemas, HTTP endpoints, dispatch."""
 import json
 from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, patch
@@ -10,10 +10,10 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 import api.middleware.tenant as tenant_middleware_module
-import core.tools.dish_recommender as dish_recommender_module
-import core.tools.menu_fetcher as menu_fetcher_module
+import core.tools.dish_recommender as recommender_module
+import core.tools.menu_fetcher as catalog_fetcher_module
 from api.main import app
-from core.models.menu import MenuItem
+from core.models.menu import CatalogItem
 from core.models.tenant import TenantConfig
 from mcp.server import TOOL_SCHEMAS, MCP_MANIFEST, _call_tool
 
@@ -32,18 +32,18 @@ async def setup_db(monkeypatch):
         async with _Session() as s:
             yield s
 
-    for mod in (tenant_middleware_module, dish_recommender_module, menu_fetcher_module):
+    for mod in (tenant_middleware_module, recommender_module, catalog_fetcher_module):
         monkeypatch.setattr(mod, "get_session", _patched)
 
     async with _engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
 
     async with _Session() as s:
-        s.add(TenantConfig(tenant_id=TENANT_ID, restaurant_name="MCP Test",
+        s.add(TenantConfig(tenant_id=TENANT_ID, business_name="MCP Test",
                            api_key="sk-mcp", is_active=True))
-        s.add(MenuItem(tenant_id=TENANT_ID, dish_id="d1", name="Spicy Lamb",
-                       description="Bold lamb curry", price=18.0, category="Mains",
-                       allergens='["gluten"]', dietary_tags='["spicy"]'))
+        s.add(CatalogItem(tenant_id=TENANT_ID, item_id="i1", name="Spicy Lamb",
+                          description="Bold lamb curry", price=18.0, category="Mains",
+                          constraints='["gluten"]', tags='["spicy"]'))
         await s.commit()
 
     yield
@@ -62,7 +62,7 @@ def test_tool_schemas_list_returns_three_tools():
 
 def test_tool_names_are_correct():
     names = {t["name"] for t in TOOL_SCHEMAS}
-    assert names == {"recommend_dish", "get_menu", "search_reviews"}
+    assert names == {"recommend", "get_catalog", "search_reviews"}
 
 
 def test_each_tool_has_required_fields():
@@ -75,7 +75,7 @@ def test_each_tool_has_required_fields():
 
 def test_manifest_contains_tools():
     assert len(MCP_MANIFEST["tools"]) == 3
-    assert MCP_MANIFEST["name"] == "restaurant-agent"
+    assert MCP_MANIFEST["name"] == "catalog-agent"
 
 
 # ---------------------------------------------------------------------------
@@ -104,9 +104,9 @@ async def test_mcp_manifest_sse_returns_200(client):
 
 
 @pytest.mark.asyncio
-async def test_mcp_call_get_menu(client):
+async def test_mcp_call_get_catalog(client):
     resp = await client.post("/mcp/call", json={
-        "tool_name": "get_menu",
+        "tool_name": "get_catalog",
         "tool_input": {"tenant_id": TENANT_ID},
     }, headers=HEADERS)
     assert resp.status_code == 200
@@ -129,8 +129,8 @@ async def test_mcp_call_unknown_tool_returns_404(client):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_call_tool_get_menu_returns_items():
-    result = await _call_tool("get_menu", {"tenant_id": TENANT_ID})
+async def test_call_tool_get_catalog_returns_items():
+    result = await _call_tool("get_catalog", {"tenant_id": TENANT_ID})
     assert "items" in result or "success" in result
 
 

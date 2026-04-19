@@ -185,7 +185,7 @@ async def db_with_tenant(monkeypatch):
         await conn.run_sync(SQLModel.metadata.create_all)
 
     async with _TestSessionLocal() as s:
-        s.add(TenantConfig(tenant_id=TENANT_ID, restaurant_name="Review Test", api_key="sk-x", is_active=True))
+        s.add(TenantConfig(tenant_id=TENANT_ID, business_name="Review Test", api_key="sk-x", is_active=True))
         await s.commit()
 
     yield

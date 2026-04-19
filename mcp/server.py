@@ -22,22 +22,22 @@ _CHROMA_PATH = os.getenv("CHROMA_PATH", "./chroma_db")
 
 TOOL_SCHEMAS = [
     {
-        "name": "recommend_dish",
-        "description": "Recommend dishes based on taste preferences and dietary restrictions.",
+        "name": "recommend",
+        "description": "Recommend catalog items based on customer preferences and constraints.",
         "inputSchema": {
             "type": "object",
             "properties": {
-                "tenant_id": {"type": "string", "description": "Restaurant tenant identifier"},
-                "query": {"type": "string", "description": "User's taste preference query"},
-                "allergen_stops": {
+                "tenant_id": {"type": "string", "description": "Tenant identifier"},
+                "query": {"type": "string", "description": "User's preference query"},
+                "hard_stops": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Hard-stop allergens (e.g. ['gluten', 'dairy'])",
+                    "description": "Hard-stop constraints (e.g. ['gluten', 'dairy'])",
                 },
                 "positive_signals": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Preferred flavour signals",
+                    "description": "Preferred signals",
                 },
                 "top_n": {"type": "integer", "description": "Number of recommendations", "default": 3},
             },
@@ -45,8 +45,8 @@ TOOL_SCHEMAS = [
         },
     },
     {
-        "name": "get_menu",
-        "description": "Get the full structured menu for a restaurant tenant.",
+        "name": "get_catalog",
+        "description": "Get the full catalog for a tenant.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -74,8 +74,8 @@ TOOL_SCHEMAS = [
 
 MCP_MANIFEST = {
     "schema_version": "v1",
-    "name": "restaurant-agent",
-    "description": "Restaurant dish recommendation and review search",
+    "name": "catalog-agent",
+    "description": "Catalog item recommendation and review search",
     "tools": TOOL_SCHEMAS,
 }
 
@@ -89,23 +89,23 @@ async def _call_tool(tool_name: str, tool_input: dict[str, Any]) -> dict[str, An
     tenant_id = tool_input.get("tenant_id", "")
     session_id = "mcp-session"
 
-    if tool_name == "recommend_dish":
-        from core.tools.dish_recommender import DishRecommenderInput, DishRecommenderTool
-        tool = DishRecommenderTool(chroma_path=_CHROMA_PATH)
-        result = await tool(DishRecommenderInput(
+    if tool_name == "recommend":
+        from core.tools.dish_recommender import RecommenderInput, RecommenderTool
+        tool = RecommenderTool(chroma_path=_CHROMA_PATH)
+        result = await tool(RecommenderInput(
             tenant_id=tenant_id,
             session_id=session_id,
             query=tool_input.get("query", ""),
-            allergen_stops=tool_input.get("allergen_stops", []),
+            hard_stops=tool_input.get("hard_stops", []),
             positive_signals=tool_input.get("positive_signals", []),
             top_n=tool_input.get("top_n", 3),
         ))
         return result.model_dump()
 
-    if tool_name == "get_menu":
-        from core.tools.menu_fetcher import MenuFetcherInput, MenuFetcherTool
-        tool = MenuFetcherTool()
-        result = await tool(MenuFetcherInput(
+    if tool_name == "get_catalog":
+        from core.tools.menu_fetcher import CatalogFetcherInput, CatalogFetcherTool
+        tool = CatalogFetcherTool()
+        result = await tool(CatalogFetcherInput(
             tenant_id=tenant_id,
             session_id=session_id,
             available_only=tool_input.get("available_only", True),

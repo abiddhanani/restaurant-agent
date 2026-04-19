@@ -1,7 +1,7 @@
 # Restaurant Agent — Progress Tracker
 
-**Last Updated:** 2026-03-20
-**Current Story:** Complete
+**Last Updated:** 2026-04-18
+**Current Story:** GEN-1 through GEN-5 Complete (generalization refactor)
 
 ---
 

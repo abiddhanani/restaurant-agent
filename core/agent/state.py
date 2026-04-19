@@ -1,7 +1,7 @@
 """LangGraph agent state definition."""
 from typing import Any, Optional, Annotated
 from pydantic import BaseModel
-from core.models.preference import UserTasteProfile
+from core.models.preference import CustomerProfile
 from core.models.session import Message
 import operator
 
@@ -20,7 +20,7 @@ class AgentState(BaseModel):
     current_input: str = ""
 
     # Preferences — evolves through conversation
-    taste_profile: Optional[UserTasteProfile] = None
+    customer_profile: Optional[CustomerProfile] = None
 
     # Tool results
     last_tool_results: dict[str, Any] = {}

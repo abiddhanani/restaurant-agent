@@ -24,7 +24,7 @@ class ReviewSnippet(BaseModel):
     rating: float
     freshness_score: float
     relevance_score: float
-    dish_mentioned: Optional[str] = None
+    item_mentioned: Optional[str] = None
 
 
 class ReviewRetrievalOutput(ToolOutput):

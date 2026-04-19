@@ -16,14 +16,14 @@ class TestHallucinationChecker:
     def test_response_with_menu_dish_passes(self):
         result = self.checker.check(
             response="I recommend the Spicy Lamb — it's excellent!",
-            tenant_menu_dish_names=["Spicy Lamb", "Tiramisu", "Bruschetta"],
+            catalog_item_names=["Spicy Lamb", "Tiramisu", "Bruschetta"],
         )
         assert result.passed
 
     def test_response_with_phantom_dish_blocked(self):
         result = self.checker.check(
             response="Try the Unicorn Burger, it's our best seller!",
-            tenant_menu_dish_names=["Spicy Lamb", "Tiramisu"],
+            catalog_item_names=["Spicy Lamb", "Tiramisu"],
         )
         assert not result.passed
         assert result.check_name == "hallucination_checker"
@@ -32,14 +32,14 @@ class TestHallucinationChecker:
     def test_empty_menu_skips_check(self):
         result = self.checker.check(
             response="Try the Spicy Lamb!",
-            tenant_menu_dish_names=[],
+            catalog_item_names=[],
         )
         assert result.passed
 
     def test_response_without_dish_names_passes(self):
         result = self.checker.check(
             response="Our restaurant is open from 12pm to 10pm daily.",
-            tenant_menu_dish_names=["Spicy Lamb"],
+            catalog_item_names=["Spicy Lamb"],
         )
         assert result.passed
 
@@ -124,7 +124,7 @@ class TestPipelineCheckOutput:
         result = await pipeline.check_output(
             response="I recommend our Spicy Lamb, it's packed with bold spices.",
             retrieved_docs=[],
-            tenant_menu_dish_names=["Spicy Lamb", "Tiramisu"],
+            catalog_item_names=["Spicy Lamb", "Tiramisu"],
         )
         assert result.passed
         assert result.check_name == "all_passed"
@@ -135,7 +135,7 @@ class TestPipelineCheckOutput:
         result = await pipeline.check_output(
             response="You should invest in crypto to pay for dinner.",
             retrieved_docs=[],
-            tenant_menu_dish_names=["Spicy Lamb"],
+            catalog_item_names=["Spicy Lamb"],
         )
         assert not result.passed
         assert result.check_name == "scope_drift"
@@ -146,7 +146,7 @@ class TestPipelineCheckOutput:
         result = await pipeline.check_output(
             response='Reviews confirm "absolutely the finest dining experience anywhere".',
             retrieved_docs=["the food was good"],
-            tenant_menu_dish_names=["Spicy Lamb"],
+            catalog_item_names=["Spicy Lamb"],
         )
         assert not result.passed
         assert result.check_name == "claim_verifier"

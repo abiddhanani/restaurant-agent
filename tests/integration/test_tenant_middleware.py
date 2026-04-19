@@ -35,7 +35,7 @@ async def setup_test_db(monkeypatch):
         session.add(
             TenantConfig(
                 tenant_id="restaurant_demo",
-                restaurant_name="Demo Restaurant",
+                business_name="Demo Restaurant",
                 api_key="sk-demo-key",
                 is_active=True,
             )
@@ -43,7 +43,7 @@ async def setup_test_db(monkeypatch):
         session.add(
             TenantConfig(
                 tenant_id="inactive_tenant",
-                restaurant_name="Closed Restaurant",
+                business_name="Closed Restaurant",
                 api_key="sk-inactive-key",
                 is_active=False,
             )
