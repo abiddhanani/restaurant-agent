@@ -1,5 +1,11 @@
-"""Catalog management endpoints."""
+"""Menu management endpoints."""
 import json
+
+from fastapi import APIRouter, Request
+from sqlmodel import select
+
+from core.db.session import get_session
+from core.models.menu import MenuItem, MenuItemRead
 
 from fastapi import APIRouter, Request
 from sqlmodel import select
@@ -7,45 +13,42 @@ from sqlmodel import select
 from core.db.session import get_session
 from core.models.menu import CatalogItem, CatalogItemRead
 
-router = APIRouter(prefix="/catalog", tags=["catalog"])
-
-
-@router.get("", response_model=list[CatalogItemRead])
-async def get_catalog(request: Request, available_only: bool = True) -> list[CatalogItemRead]:
-    """Get catalog for the tenant resolved via X-Tenant-ID middleware."""
+@router.get("", response_model=list[MenuItemRead])
+async def get_menu(request: Request, available_only: bool = True) -> list[MenuItemRead]:
+    """Get menu for the tenant resolved via X-Tenant-ID middleware."""
     tenant_id = request.state.tenant_id
     async with get_session() as session:
-        q = select(CatalogItem).where(CatalogItem.tenant_id == tenant_id)
+        q = select(MenuItem).where(MenuItem.tenant_id == tenant_id)
         if available_only:
-            q = q.where(CatalogItem.is_available == True)  # noqa: E712
+            q = q.where(MenuItem.is_available == True)  # noqa: E712
         results = await session.exec(q)
         items = results.all()
-    return [CatalogItemRead.from_db(item) for item in items]
+    return [MenuItemRead.from_db(item) for item in items]
 
 
-@router.post("", response_model=list[CatalogItemRead])
-async def upsert_catalog(items: list[CatalogItemRead], request: Request) -> list[CatalogItemRead]:
-    """Replace the full catalog for the tenant with the supplied list of items."""
+@router.post("", response_model=list[MenuItemRead])
+async def upsert_menu(items: list[MenuItemRead], request: Request) -> list[MenuItemRead]:
+    """Replace the full menu for the tenant with the supplied list of items."""
     tenant_id = request.state.tenant_id
     async with get_session() as session:
         existing = await session.exec(
-            select(CatalogItem).where(CatalogItem.tenant_id == tenant_id)
+            select(MenuItem).where(MenuItem.tenant_id == tenant_id)
         )
         for row in existing.all():
             await session.delete(row)
         for item in items:
             session.add(
-                CatalogItem(
+                MenuItem(
                     tenant_id=tenant_id,
-                    item_id=item.item_id,
+                    dish_id=item.dish_id,
                     name=item.name,
                     description=item.description,
                     price=item.price,
                     category=item.category,
-                    constraints=json.dumps(item.constraints),
-                    tags=json.dumps(item.tags),
-                    attributes=json.dumps(item.attributes),
+                    allergens=json.dumps(item.allergens),
+                    dietary_tags=json.dumps(item.dietary_tags),
                     is_available=item.is_available,
+                    spice_level=item.spice_level,
                     image_url=item.image_url,
                 )
             )

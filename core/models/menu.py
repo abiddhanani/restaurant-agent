@@ -1,4 +1,4 @@
-"""Catalog item data models — domain-agnostic, works for any business type."""
+"""Menu and dish data models."""
 import json
 from typing import Optional
 from pydantic import BaseModel
@@ -11,9 +11,9 @@ class ConstraintInfo(BaseModel):
     may_contain: list[str] = []
 
 
-class CatalogItemDTO(BaseModel):
-    """Single catalog item (Pydantic DTO)."""
-    item_id: str
+class Dish(BaseModel):
+    """Single menu item (Pydantic DTO)."""
+    dish_id: str
     name: str
     description: str
     price: float
@@ -31,49 +31,46 @@ class Catalog(BaseModel):
     last_updated: str
 
 
-class CatalogItem(SQLModel, table=True):
-    """Persisted catalog item row — one per item per tenant."""
+class MenuItem(SQLModel, table=True):
+    """Persisted menu item row — one per dish per tenant."""
     id: Optional[int] = Field(default=None, primary_key=True)
     tenant_id: str = Field(index=True)
-    item_id: str = Field(index=True)
+    dish_id: str = Field(index=True)
     name: str
     description: str
     price: float
     category: str
-    constraints: str = Field(default="[]")   # JSON list of strings
-    tags: str = Field(default="[]")           # JSON list of strings
-    attributes: str = Field(default="{}")     # JSON dict for domain-specific extras
+    allergens: str = Field(default="[]")    # JSON list of strings
+    dietary_tags: str = Field(default="[]") # JSON list of strings
     is_available: bool = Field(default=True)
+    spice_level: Optional[int] = None
     image_url: Optional[str] = None
-    video_url: Optional[str] = None
 
 
-class CatalogItemRead(BaseModel):
-    """API response DTO — deserialises JSON fields back to lists/dicts."""
-    item_id: str
+class MenuItemRead(BaseModel):
+    """API response DTO — deserialises JSON fields back to lists."""
+    dish_id: str
     name: str
     description: str
     price: float
     category: str
-    constraints: list[str]
-    tags: list[str]
-    attributes: dict
+    allergens: list[str]
+    dietary_tags: list[str]
     is_available: bool
+    spice_level: Optional[int] = None
     image_url: Optional[str] = None
-    video_url: Optional[str] = None
 
     @classmethod
-    def from_db(cls, item: CatalogItem) -> "CatalogItemRead":
+    def from_db(cls, item: MenuItem) -> "MenuItemRead":
         return cls(
-            item_id=item.item_id,
+            dish_id=item.dish_id,
             name=item.name,
             description=item.description,
             price=item.price,
             category=item.category,
-            constraints=json.loads(item.constraints),
-            tags=json.loads(item.tags),
-            attributes=json.loads(item.attributes),
+            allergens=json.loads(item.allergens),
+            dietary_tags=json.loads(item.dietary_tags),
             is_available=item.is_available,
+            spice_level=item.spice_level,
             image_url=item.image_url,
-            video_url=item.video_url,
         )
