@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
 
 
-class AllergenInfo(BaseModel):
-    """Allergen information for a dish."""
+class ConstraintInfo(BaseModel):
+    """Hard-stop constraints for a catalog item (allergens, sensitivities, etc.)."""
     contains: list[str] = []
     may_contain: list[str] = []
 
@@ -18,16 +18,16 @@ class Dish(BaseModel):
     description: str
     price: float
     category: str
-    allergens: AllergenInfo = AllergenInfo()
-    dietary_tags: list[str] = []
+    constraints: ConstraintInfo = ConstraintInfo()
+    tags: list[str] = []
     is_available: bool = True
     image_url: Optional[str] = None
 
 
-class Menu(BaseModel):
-    """Full restaurant menu."""
+class Catalog(BaseModel):
+    """Full tenant catalog."""
     tenant_id: str
-    dishes: list[Dish]
+    items: list[CatalogItemDTO]
     last_updated: str
 
 

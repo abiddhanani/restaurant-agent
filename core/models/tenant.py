@@ -1,19 +1,19 @@
-"""Tenant (restaurant) data models."""
+"""Tenant data models — domain-agnostic business configuration."""
 from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel, Field
 
 
 class TenantConfig(SQLModel, table=True):
-    """Per-restaurant configuration stored in DB."""
+    """Per-tenant configuration stored in DB."""
     id: Optional[int] = Field(default=None, primary_key=True)
     tenant_id: str = Field(unique=True, index=True)
-    restaurant_name: str
+    business_name: str
+    industry: str = Field(default="restaurant")  # restaurant, salon, software, construction, etc.
     api_key: str = Field(unique=True, index=True)
-    google_place_id: Optional[str] = None
-    yelp_business_id: Optional[str] = None
+    domain_config: str = Field(default="{}")  # JSON dict — industry-specific settings
     widget_primary_color: str = "#000000"
-    widget_welcome_message: str = "Hi! I can help you find the perfect dish."
+    widget_welcome_message: str = "Hi! How can I help you today?"
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
@@ -22,7 +22,8 @@ class TenantConfig(SQLModel, table=True):
 class TenantConfigRead(SQLModel):
     """Public-safe tenant config (no secrets)."""
     tenant_id: str
-    restaurant_name: str
+    business_name: str
+    industry: str
     widget_primary_color: str
     widget_welcome_message: str
     is_active: bool

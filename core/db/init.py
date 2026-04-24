@@ -15,7 +15,7 @@ async def create_db_and_tables() -> None:
 
 
 async def seed_demo_tenant() -> None:
-    """Insert the restaurant_demo tenant if it is not already present."""
+    """Insert the demo tenant if it is not already present."""
     async with AsyncSessionLocal() as session:
         result = await session.exec(
             select(TenantConfig).where(TenantConfig.tenant_id == "restaurant_demo")
@@ -23,9 +23,9 @@ async def seed_demo_tenant() -> None:
         if result.first() is None:
             demo = TenantConfig(
                 tenant_id="restaurant_demo",
-                restaurant_name="Demo Restaurant",
+                business_name="Demo Restaurant",
+                industry="restaurant",
                 api_key=os.getenv("DEMO_API_KEY", "demo-api-key-local"),
-                google_place_id="ChIJDemo123",
             )
             session.add(demo)
             await session.commit()

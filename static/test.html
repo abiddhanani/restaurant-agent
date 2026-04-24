@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget Demo — Restaurant Agent</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: #f9f5f0;
+      color: #333;
+    }
+    header {
+      background: #e85d26;
+      color: #fff;
+      padding: 24px 32px;
+    }
+    header h1 { margin: 0; font-size: 28px; }
+    header p { margin: 6px 0 0; opacity: 0.85; }
+    main {
+      max-width: 760px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .card h2 { margin-top: 0; color: #e85d26; }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Bella Cucina <span class="badge">Demo</span></h1>
+  <p>Authentic Italian cuisine — click the chat button to try the widget</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>About the Widget</h2>
+    <p>
+      This page embeds the <strong>Restaurant Agent chat widget</strong>. You should see a floating
+      orange button in the bottom-right corner. Click it to open the chat panel and ask about
+      dishes, allergens, or recommendations.
+    </p>
+    <p>Session ID is persisted in <code>sessionStorage</code> — reloading the page keeps the same session.</p>
+  </div>
+
+  <div class="card">
+    <h2>Embed Code</h2>
+    <p>Add this single script tag to any restaurant website:</p>
+    <pre>&lt;script
+  src="/static/widget.js"
+  data-tenant-id="demo"
+  data-restaurant-name="Bella Cucina"
+  data-theme-color="#e85d26"
+&gt;&lt;/script&gt;</pre>
+    <p>Available attributes:</p>
+    <ul>
+      <li><code>data-tenant-id</code> — your restaurant's tenant ID (required)</li>
+      <li><code>data-restaurant-name</code> — display name in the widget header</li>
+      <li><code>data-theme-color</code> — hex colour for the button and header</li>
+      <li><code>data-api-base</code> — override API base URL (defaults to same origin)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Test Queries</h2>
+    <ul>
+      <li>"What pasta dishes do you have?"</li>
+      <li>"I'm allergic to nuts — what can I eat?"</li>
+      <li>"What's your most popular dish?"</li>
+      <li>"Do you have anything vegan?"</li>
+      <li>"Tell me about the daily specials"</li>
+    </ul>
+  </div>
+</main>
+
+<!-- Widget embed -->
+<script
+  src="/static/widget.js"
+  data-tenant-id="demo"
+  data-restaurant-name="Bella Cucina"
+  data-theme-color="#e85d26"
+></script>
+
+</body>
+</html>

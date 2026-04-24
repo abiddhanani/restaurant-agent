@@ -14,7 +14,7 @@
 | 3 | RA-7 – RA-10 | ⬜ Not Started |
 | 4 | RA-11 – RA-14 | ⬜ Not Started |
 | 5 | RA-15 – RA-18 | ⬜ Not Started |
-| 6 | RA-19 – RA-21 | ⬜ Not Started |
+| 6 | RA-19 – RA-21 | ✅ Complete |
 
 ---
 
@@ -40,17 +40,17 @@
 ## Week 2: RAG Pipeline
 
 ### RA-4: Google Places API Integration
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-4
 **Objective:** Fetch real reviews from Google Places API
 
 ### RA-5: Review Chunking & Embedding
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-5
 **Objective:** Chunk reviews, embed, store in ChromaDB
 
 ### RA-6: Retrieval Engine with Freshness Scoring
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-6
 **Objective:** Query ChromaDB with freshness decay working
 
@@ -59,22 +59,22 @@
 ## Week 3: Agent Core & A2A
 
 ### RA-7: LangGraph Agent Graph Foundation
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-7
 **Objective:** Basic conversational agent running
 
 ### RA-8: Session Management (In-Memory)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-8
 **Objective:** Session persistence across messages
 
 ### RA-9: Preference Model Integration
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-9
 **Objective:** Taste profile evolves through conversation
 
 ### RA-10: A2A Server & Agent Card
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-10
 **Objective:** Agent Card served, A2A endpoint working
 
@@ -83,22 +83,22 @@
 ## Week 4: Tools
 
 ### RA-11: Menu Fetcher Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-11
 **Objective:** Agent can query available dishes
 
 ### RA-12: Review Retrieval Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-12
 **Objective:** Agent retrieves relevant reviews from ChromaDB
 
 ### RA-13: Dish Recommender Tool
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-13
 **Objective:** Cross-reference menu + taste profile + reviews
 
 ### RA-14: External Cuisine Agent (Stub)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-14
 **Objective:** A2A client calls external cuisine expert
 
@@ -107,22 +107,22 @@
 ## Week 5: Guardrails & MCP
 
 ### RA-15: Input Guardrails (Layer 1)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-15
 **Objective:** Scope, PII, toxicity filtering
 
 ### RA-16: Tool Execution Guardrails (Layer 2)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-16
 **Objective:** Allergen circuit breaker, menu grounding
 
 ### RA-17: Output Guardrails (Layer 3)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-17
 **Objective:** Hallucination check, grounding verification
 
 ### RA-18: MCP Server Implementation
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-18
 **Objective:** MCP endpoint working, testable from Claude
 
@@ -131,17 +131,17 @@
 ## Week 6: Evaluation & Deployment
 
 ### RA-19: Golden Dataset & Eval Pipeline
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-19
 **Objective:** 10+ scored conversations, pipeline running
 
 ### RA-20: Embeddable Widget
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-20
 **Objective:** Widget embeddable on test restaurant site
 
 ### RA-21: Deploy to Railway + Observability
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Jira:** RA-21
 **Objective:** Live deployment, Langfuse tracing working
 

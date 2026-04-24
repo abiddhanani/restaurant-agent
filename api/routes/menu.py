@@ -7,8 +7,11 @@ from sqlmodel import select
 from core.db.session import get_session
 from core.models.menu import MenuItem, MenuItemRead
 
-router = APIRouter(prefix="/menu", tags=["menu"])
+from fastapi import APIRouter, Request
+from sqlmodel import select
 
+from core.db.session import get_session
+from core.models.menu import CatalogItem, CatalogItemRead
 
 @router.get("", response_model=list[MenuItemRead])
 async def get_menu(request: Request, available_only: bool = True) -> list[MenuItemRead]:
